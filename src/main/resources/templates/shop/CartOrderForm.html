@@ -10,8 +10,8 @@
     <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
     </script>
-    <script src="scripts/icon.js" crossorigin="anonymous"></script>
-    <script src="scripts/id.js"></script>
+    <script src="../scripts/icon.js" crossorigin="anonymous"></script>
+    <script src="../scripts/id.js"></script>
     <title>주문서</title>
     <style>
         #orderDiv {
@@ -181,10 +181,10 @@
         /*[/]*/
         /*]]>*/
 
-        $('#btnPay').click(function() {
-            $('#orderForm')[0].submit();
-        });
-        /*
+        // $('#btnPay').click(function() {
+        //     $('#orderForm')[0].submit();
+        // });
+
         $('#btnPay').click(function() {
             BootPay.request({
                 price: 100,
@@ -195,10 +195,10 @@
                 show_agree_window: 0,
                 items: items,
                 user_info: {
-                    username: a,
-                    email: a,
-                    addr: a,
-                    phone: a
+                    username: [[${account.name}]],
+                    email: [[${account.email}]],
+                    addr: [[${account.addr1}]],
+                    phone: [[${account.phone}]]
                 },
                 order_id: 'order_id_1234', //고유 주문번호로, 생성하신 값을 보내주셔야 합니다.
             }).error(function (data) {
@@ -230,7 +230,7 @@
                 $('#orderForm')[0].submit();
                 console.log(data);
             });
-        });*/
+        });
     });
 </script>
 </html>
