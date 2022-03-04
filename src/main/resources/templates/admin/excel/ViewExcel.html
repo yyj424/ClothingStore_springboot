@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+</head>
+<body>
+<div style="width: 50%; margin: 0px auto;">
+    <button type="button" class="btn btn-outline-primary" th:onclick="|location.href='/admin/excel'|">판매량 관리 페이지</button>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="one wide">번호</th>
+            <th class="ten wide">상품명</th>
+            <th class="one wide">색상</th>
+            <th class="one wide">사이즈</th>
+            <th class="one wide">재고</th>
+            <th class="one wide">판매량</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="data : ${dataList}" class="table-secondary">
+            <td>
+                <span th:text="${data.num}"></span>
+            </td>
+            <td>
+                <span th:text="${data.name}"></span>
+            </td>
+            <td>
+                <span th:text="${data.color}"></span>
+            </td>
+            <td>
+                <span th:text="${data.size}"></span>
+            </td>
+            <td>
+                <span th:text="${data.stock}"></span>
+            </td>
+            <td>
+                <span th:text="${data.sales}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

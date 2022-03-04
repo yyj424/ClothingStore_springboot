@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script src="scripts/icon.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <style>
+        #productDiv {
+            width: 60%;
+            margin: 0px auto;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="/fragment/ShopHeader.html :: shopheader"></header>
+<div id="productDiv">
+    <table style="margin-top: 50px;">
+        <tr>
+            <td>
+                <img th:src="${product.thumb}" style="width:400px; height: 400px;border: solid 1px lightgray;" id="selectedThumb"/><br>
+            </td>
+            <td style="padding-left: 50px;padding-top: 10px;vertical-align : top;">
+                <input type="hidden" th:if="${product.discount != 0}" id="price" th:value="${product.price * (100 - product.discount) / 100}"/>
+                <input type="hidden" th:if="${product.discount == 0}" id="price" th:value="${product.price}"/>
+                <div><h3 th:text="${product.name}" style="display: inline;"></h3><span th:if="${product.soldOut.equals('Y')}" class="badge bg-warning" style="margin-left: 5px;color:white;display: inline;">품절</span></div>
+                <h2 th:if="${product.discount != 0}" th:text="${#numbers.formatInteger((product.price * (100 - product.discount) / 100), 3, 'COMMA')}" style="font-weight: bold; display: inline;"></h2>
+                <h3 th:if="${product.discount != 0}" th:text="${product.discount + '%'}" style="color: coral;display: inline;"></h3>
+                <h4 th:if="${product.discount != 0}" th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}" style="color: darkgrey; text-decoration-line: line-through"></h4>
+                <h2 th:if="${product.discount == 0}" th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}" style="font-weight: bold;"></h2>
+                <h5 style="margin-top: 30px;">옵션 선택</h5>
+                <form th:action="@{/order}" method="get" id="orderForm">
+                    <input type="hidden" name="pid" th:value="${product.pid}">
+                    <input type="hidden" th:if="${product.discount != 0}" name="price" th:value="${(product.price * (100 - product.discount) / 100)}">
+                    <input type="hidden" th:if="${product.discount == 0}" name="price" th:value="${product.price}">
+                    <th:block th:each="option, index : ${options}">
+                        <th:block th:if="${option.stock > 0 && product.soldOut.equals('N')}">
+                            <input type="checkbox" name="option" th:id="${index.index}" th:value="${option.oid}" style="cursor:pointer;">
+                            <label th:if="${option.size != null}" th:for="${index.index}" th:text="${option.color + ' ' + option.size}" style="margin-right: 10px;font-size: small;cursor:pointer;"></label>
+                            <label th:if="${option.size == null}" th:for="${index.index}" th:text="${option.color}" style="margin-right: 10px;font-size: small;cursor:pointer;"></label>
+                        </th:block>
+                        <th:block th:if="${option.stock == 0 || product.soldOut.equals('Y')}">
+                            <input type="checkbox" name="option" th:id="${index.index}" th:value="${option.oid}" disabled>
+                            <label th:if="${option.size != null}" th:for="${index.index}" th:text="${option.color + ' ' + option.size + ' 품절'}" style="margin-right: 10px;font-size: small;color: lightgray"></label>
+                            <label th:if="${option.size == null}" th:for="${index.index}" th:text="${option.color + ' 품절'}" style="margin-right: 10px;font-size: small;color: lightgray"></label>
+                        </th:block>
+                    </th:block>
+                    <div style="margin-top: 10px;">
+                        <table id="selectedOptions">
+                        </table>
+                    </div>
+                    <input type="hidden" name="totalPrice"/>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img class="thumbnails" th:src="${product.thumb}" style="width:50px; height: 50px;border: solid 1px lightgray;cursor:pointer;"/>
+                <img class="thumbnails" th:each="thumb : ${thumbnails}" th:src="${thumb}" style="width:50px; height: 50px;border: solid 1px lightgray;cursor:pointer;"/>
+            </td>
+            <td th:if="${product.soldOut.equals('N')}" style="padding-left: 50px;vertical-align : top;">
+                <h5 style="display: inline;">총 상품 금액</h5>
+                <h3 id="totalPrice" style="display: inline; margin-left: 20px;">0</h3>
+            </td>
+            <td th:if="${product.soldOut.equals('Y')}" style="padding-left: 50px;text-align : center;">
+                <button type="button" class="btn btn-primary disabled" style="width: 300px;">품절</button>
+            </td>
+        </tr>
+        <tr th:if="${product.soldOut.equals('N')}">
+            <td></td>
+            <td style="padding-left: 50px;text-align : center;">
+                <button type="button" class="btn btn-secondary"
+                        data-toggle="modal" data-target="#cartModal" data-backdrop="static"
+                        style="width: 200px;display: inline;border: solid 1px black;" id="btnCart" >장바구니</button>
+                <button type="button" class="btn btn-primary" style="width: 200px;display: inline;border: solid 1px black;" id="btnOrder">바로구매</button>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <table style="margin-top: 100px; width: 100%;">
+        <tr>
+            <td style="text-align : center;"><h5 th:text="${product.desc}"></h5></td>
+        </tr>
+        <tr th:each="image : ${detailImages}" style="margin-top: 20px;">
+            <td style="text-align : center;"><img th:src="${image}" style="width:400px; height: 400px;"/></td>
+        </tr>
+    </table>
+</div>
+<footer th:replace="/fragment/Footer.html :: footer"></footer>
+<div class="modal" style="display: none;margin-top:200px;" id="cartModal" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p id="cartResult"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnCartModal" class="btn btn-primary" th:onclick="|location.href='/cart'|">장바구니 이동</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">쇼핑 계속하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    $(document).ready (function() {
+        var stocks = [];
+        var i = 0;
+        /*<![CDATA[*/
+        /*[# th:each="op : ${options}"]*/
+        stocks[i] = [[${op.stock}]];
+        i++;
+        /*[/]*/
+        /*]]>*/
+
+        var price = parseInt($('#price').val());
+        var cnt = 0;
+        $("input[name='option']").change(function(){
+            if ($(this).is(":checked")) {
+                var option = $(this).next('label').text();
+                var id = $(this).attr('id');
+                $('#selectedOptions').append('<tr id=op' + id + '><td>' + option +
+                    '</td><td><input type="button" class="minus" value="-" style="margin-left: 15px;">' +
+                    '<input type="text" name=' + $(this).val() + ' id=cnt' + id + ' value="1" readonly="readonly" style="text-align:center;width:15%;"/>' +
+                    '<input type="button" class="plus" value="+"></td></tr>');
+                cnt++;
+                $('#totalPrice').text((price * cnt).toString()
+                    .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+            }
+            else {
+                var id = $(this).attr('id');
+                cnt = cnt - parseInt($('#cnt' + id).val());
+                $('#op' + id).remove();
+                $('#totalPrice').text((price * cnt).toString()
+                    .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+            }
+        });
+        $(document).on('click','.minus', function(){
+            var value = parseInt($(this).next('input').val());
+            if (value > 1) {
+                value--;
+                cnt--;
+                $(this).next('input').val(value);
+                $('#totalPrice').text((price * cnt).toString()
+                    .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+            }
+        });
+        $(document).on('click','.plus', function(){
+            var value = parseInt($(this).prev('input').val());
+            var idx = parseInt(($(this).prev('input').attr('id').replace("cnt","")));
+            value++;
+            if (value <= stocks[idx]) {
+                cnt++;
+                $(this).prev('input').val(value);
+                $('#totalPrice').text((price * cnt).toString()
+                    .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+            }
+            else {
+                alert('해당 옵션의 구매 수량은 최대 ' + stocks[idx] + '개 입니다.');
+            }
+        });
+        $(document).on('click','.thumbnails', function(){
+            var src = $(this).attr("src");
+            $('#selectedThumb').attr("src", src);
+        });
+        $('#btnOrder').click(function() {
+            var isOption = false;
+            $("input[name='option']").each(function() {
+                if ($(this).is(":checked")){
+                    isOption = true;
+                    return false;
+                }
+            });
+            if (isOption) {
+                $("input[name='totalPrice']").val($('#totalPrice').text().toString().replace(",", ''));
+                $('#orderForm')[0].submit();
+            }
+            else {
+                alert("옵션을 선택하세요");
+            }
+        });
+        $('#btnCart').click(function () {
+            var options = [];
+            var j = 0;
+            for (var i = 0; i < [[${options.size}]]; i++) {
+                if ($('#cnt' + i).length > 0) {
+                    options[j] = {
+                        id : $('#' + i).val(),
+                        qty : $('#cnt' + i).val()
+                    };
+                    j++;
+                }
+            }
+            var data={
+                price : $("input[name='price']").val(),
+                options : options
+            };
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            $.ajax({
+                beforeSend: function(xhr){ xhr.setRequestHeader(header,token);},
+                url: "/cart/add",
+                data: JSON.stringify(data),
+                type:"POST",
+                contentType: 'application/json',
+                success: function() {
+                    $('#cartResult').text('장바구니에 상품이 담겼습니다.');
+                },
+                error: function() {
+                    $('#cartResult').text('로그인 후 이용하실 수 있습니다.');
+                }
+            });
+        });
+    })
+</script>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+</head>
+<body>
+    <div style="width: 50%; margin: 0px auto;">
+        <p th:text="'카테고리 : ' + ${board.category}" style="margin-top: 100px;"></p>
+        <p th:text="'제목 : ' + ${board.title}"></p>
+        <p th:text="'작성자 : ' + ${board.uid}"></p>
+        <p th:text="'내용 : ' + ${board.content}"></p>
+        <button type="button" class="btn btn-outline-success" th:onclick="|location.href='/board/update/${board.bid}'|">수정하기</button>
+        <button type="button" class="btn btn-outline-danger" th:onclick="|location.href='/board/delete/${board.bid}'|">삭제하기</button>
+<!--        <button type="button" class="btn btn-outline-primary" onclick="history.back(-1)">목록</button>-->
+        <button type="button" class="btn btn-outline-primary" th:onclick="|location.href='/board/list/1'|">목록</button>
+        <button type="button" data-toggle="modal" data-target="#cmtModal" class="btn btn-outline-warning" sec:authorize="isAuthenticated()">댓글 작성하기</button>
+        <div th:if="${commentList.size() != 0}">
+            <h5 style="margin-top: 50px;">댓글</h5>
+            <table class="table table-hover">
+                <tr th:each="comment, index :${commentList}">
+                    <td>
+                        <span th:text="${comment.uid}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${comment.content}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${comment.date}"></span>
+                    </td>
+<!--                    <td>-->
+<!--                        <input type="hidden" id="cid" th:value="${comment.cid}"/>-->
+<!--                        <button type="button" data-toggle="modal" data-target="#cmtModalUpdate" class="btn btn-outline-success" onClick="update()">수정</button>-->
+<!--                    </td>-->
+                    <td>
+                        <button type="button" class="btn btn-outline-danger" th:onclick="|location.href='/board/${board.bid}/comment/delete/${comment.cid}'|">삭제</button>
+                    </td>
+                </tr>
+            </table>
+            <div class="pagination" th:if="${commentPage.totalPages != 0}" style="position: relative; top: 5px; left: 200px;">
+                <ul th:class="pagination"
+                    th:with="start=${T(Math).floor(commentPage.number/5)*5 + 1},
+                    last=(${start + 4 < commentPage.totalPages ? start + 4 : commentPage.totalPages})">
+                    <li class="page-item">
+                        <a th:href="@{'/board/' + ${board.bid} +'?cmtPage=1'}" class="page-link">&laquo;</a>
+                    </li>
+                    <li th:each="page: ${#numbers.sequence(start, last)}" th:class="${page == commentPage.number + 1} ? 'active'">
+                        <a th:class="page-link" th:text="${page}" th:href="@{'/board/' + ${board.bid} +'?cmtPage={page}'(page=${page})}"></a>
+                    </li>
+                    <li th:class="page-item">
+                        <a th:id="tail" th:class="page-link" th:href="@{'/board/' + ${board.bid} +'?cmtPage={page}'(page=${commentPage.totalPages})}">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal" style="display: none;" id="cmtModal" data-backdrop="static" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form id="commentForm" th:action="@{'/board/' + ${board.bid} +'/comment'}" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        작성자 <span th:text="${uid}"></span> <br> <br>
+                    </div>
+                    <div class="modal-body">
+                        <textarea class="form-control" name="content" rows="5"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">작성</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<!--    <div class="modal" style="display: none;" id="cmtModalUpdate" data-backdrop="static" role="dialog">-->
+<!--        <div class="modal-dialog" role="document">-->
+<!--            <form id="commentUpdateForm" th:action="@{'/comment/update/${comment.cid}'}" method="post">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-header">-->
+<!--                        작성자 <input id="cmtUid" type="text" class="form-control" style="width: 80%;" name="uid"> <br>-->
+<!--                    </div>-->
+<!--                    <div class="modal-body">-->
+<!--                        <textarea id="cmtContent" class="form-control" name="content" rows="5"></textarea>-->
+<!--                    </div>-->
+<!--                    <div class="modal-footer">-->
+<!--                        <button type="submit" class="btn btn-primary">작성</button>-->
+<!--                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
+</body>
+<script>
+    // function update() {
+    //     $.ajax({
+    //         type : "GET",
+    //         url : "/comment/" + document.getElementById('cid').value,
+    //         error : function(error) {
+    //             alert("error : " + error);
+    //         },
+    //         success : function(data) {
+    //             // document.getElementById('cmtUid').value = data.get("uid");
+    //             // document.getElementById('cmtContent').text = data.get("content");
+    //             alert("scc")
+    //         }
+    //     })
+    // }
+</script>
+</html>

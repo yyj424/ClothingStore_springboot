@@ -1,7 +1,12 @@
 HELP.md
 .gradle
+gradle/
 **/src/main/resources/application.properties
+**/src/main/resources/static/images
+**/src/main/resources/static/scripts
 **/src/test/**
+gradlew
+gradlew.bat
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

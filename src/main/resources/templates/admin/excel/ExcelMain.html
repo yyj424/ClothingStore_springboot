@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <title>AdminMain</title>
+</head>
+<body>
+<header th:replace="/fragment/Header.html :: header"></header>
+<div style="position: absolute;left: 50%; top:30%; transform: translateX(-50%);">
+    <h1>판매량 엑셀 파일 업로드/다운로드</h1>
+    <button type="button" class="btn btn-success" th:onclick="|location.href='/admin/excel/upload'|">업로드</button>
+    <button type="button" class="btn btn-success" th:onclick="|location.href='/admin/excel/download'|">다운로드</button>
+</div>
+<footer th:replace="/fragment/Footer.html :: footer"></footer>
+</body>
+</html>

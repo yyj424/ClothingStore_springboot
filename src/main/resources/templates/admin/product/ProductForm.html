@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <title>상품 등록</title>
+    <style>
+        .delThumb, .delImage {
+            position: relative; background-color: red;
+            color: white; width: 10px; height: 10px;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 50%; margin: 0px auto;">
+    <form th:action="@{/admin/product/enroll}" method="post" id="enrollForm" enctype="multipart/form-data">
+        <div class="form-group" style="width: 200px; margin-top: 50px;">
+            <select class="form-select" name="category" id="category">
+                <option value="1">TOP</option>
+                <option value="2">OUTER</option>
+                <option value="3">PANTS</option>
+                <option value="4">SKIRTS</option>
+            </select>
+        </div>
+        <div>
+            이름 : <input type="text" class="form-control" style="width: 500px;" name="name" required> <br>
+            가격 : <input type="text" class="form-control" style="width: 500px;" name="price" required> <br>
+            할인율 : <input type="text" class="form-control" style="width: 500px;" name="discount" value="0"> <br>
+            설명 : <textarea class="form-control" name="desc" rows="5" style="width: 500px; height: 100px;" required></textarea> <br>
+            대표 썸네일 :
+            <table>
+                <tr>
+                    <td id="mainThumbPrev"></td><td>&nbsp;</td>
+                    <td>
+                        <input id="mainThumb" type="file" class="form-control" name="mainThumb" accept=".gif, .jpg, .png" required>
+                    </td>
+                </tr>
+            </table>
+            추가 썸네일 : <input id="addThumbs" type="file" class="form-control" name="thumb" accept=".gif, .jpg, .png" multiple> <br>
+            <table>
+                <tr id="thumbPreview">
+                </tr>
+            </table>
+            상세이미지 : <input id="addImages" multiple="multiple" type="file" class="form-control" name="image" accept=".gif, .jpg, .png"> <br>
+            <table>
+                <tr id="imagePreview">
+                </tr>
+            </table>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>색상</th>
+                    <th>사이즈</th>
+                    <th>재고</th>
+                    <th><button type="button" id="btnAddOption">+</button></th>
+                </tr>
+                </thead>
+                <tbody id="trOption">
+                    <tr class="table-secondary" id="option0">
+                        <td>
+                            <input type="text" name="options[0].color" required>
+                        </td>
+                        <td>
+                            <input type="text" name="options[0].size" required>
+                        </td>
+                        <td>
+                            <input type="number" name="options[0].stock" value="1" required>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="btn btn-outline-primary" id="btnSubmit" style="width: 200px; margin-top: 50px;">등록</button>
+        <button type="button" class="btn btn-outline-danger" onclick="history.back(-1)" style="width: 200px; margin-top: 50px;">취소</button>
+    </form>
+</div>
+</body>
+<script>
+    var i = 1;
+    $(document).ready (function() {
+        $('#btnAddOption').click(function() {
+            $('#trOption').append(
+                "<tr class='table-secondary' id=option" + i + ">" +
+                "<td><input type='text' name=options[" + i + "].color required></td>" +
+                "<td><input type='text' name=options[" + i + "].size required></td>" +
+                "<td><input type='text' name=options[" + i + "].stock value='1'></td>" +
+                "<td><button type='button' class='delOption' data-value=option" + i + ">x</button></td></tr>"
+            )
+            i++;
+        });
+        $('#btnSubmit').click(function() {
+            $('#enrollForm')[0].submit();
+        });
+        $(document).on('click','.delOption', function(){
+            var id = $(this).data("value");
+            $('#' + id).remove();
+        });
+        $("#mainThumb").change(function(e) {
+            $('#mainThumbPrev').empty();
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#mainThumbPrev').append('<img src=' + e.target.result + ' style="width:100px;height:100px;"/>');
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        })
+        $("#addThumbs").change(function(e) {
+            $('#thumbPreview').empty();
+            var files = e.target.files;
+            var arr = Array.prototype.slice.call(files);
+            preview(arr);
+            function preview(arr) {
+                arr.forEach(function (file) {
+                    if (file.type.match('image.*')) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#thumbPreview').append(
+                                '<td><img src=' + e.target.result + ' style="width:100px;height:100px;"/>' +
+                                '<span class="delThumb">x</span></td>');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                })
+            }
+        })
+        $("#addImages").change(function(e) {
+            $('#imagePreview').empty();
+            var files = e.target.files;
+            var arr = Array.prototype.slice.call(files);
+            preview(arr);
+            function preview(arr) {
+                arr.forEach(function (file) {
+                    if (file.type.match('image.*')) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#imagePreview').append(
+                                '<td><img src=' + e.target.result + ' style="width:100px;height:100px;"/>' +
+                                '<span class="delImage">x</span></td>');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                })
+            }
+        })
+        $(document).on('click','.delThumb', function(){
+            var transfer = new DataTransfer();
+            var files = $("#addThumbs")[0].files;
+            var arr = Array.prototype.slice.call(files);
+            arr.splice($(this).parent("td").index(), 1);
+            arr.forEach(file => {transfer.items.add(file);});
+            $(this).parent("td").remove();
+            $("#addThumbs")[0].files = transfer.files;
+        });
+        $(document).on('click','.delImage', function(){
+            var transfer = new DataTransfer();
+            var files = $("#addImages")[0].files;
+            var arr = Array.prototype.slice.call(files);
+            arr.splice($(this).parent("td").index(), 1);
+            arr.forEach(file => {transfer.items.add(file);});
+            $(this).parent("td").remove();
+            $("#addImages")[0].files = transfer.files;
+        });
+    })
+</script>
+</html>
