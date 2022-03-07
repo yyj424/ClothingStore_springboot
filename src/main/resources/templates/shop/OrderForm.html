@@ -173,7 +173,7 @@
                 item_name: [[${product.name}]],
                 qty: [[${quantity.get(op.oid)}]], //수량
                 unique: String([[${op.oid}]]), //해당 상품을 구분짓는 primary key
-                price: 100, //상품 단가
+                price: 1000, //상품 단가
                 cat1: [[${product.category}]], // 대표 상품의 카테고리 상, 50글자 이내
             }
             console.log(items[i]);
@@ -182,15 +182,15 @@
         /*]]>*/
 
 
-
+        /*
         $('#btnPay').click(function() {
             $('#orderForm')[0].submit();
         });
+        */
 
-        /*
         $('#btnPay').click(function() {
             BootPay.request({
-                price: 100,
+                price: 1000,
                 application_id: appId,
                 name: [[${product.name}]],
                 pg: 'inicis',
@@ -233,7 +233,7 @@
                 $('#orderForm')[0].submit();
                 console.log(data);
             });
-        });*/
+        });
     });
 </script>
 </html>

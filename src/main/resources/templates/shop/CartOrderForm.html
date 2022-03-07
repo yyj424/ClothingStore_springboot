@@ -173,8 +173,8 @@
             item_name: [[${cart.product.name}]],
             qty: [[${cart.quantity}]], //수량
             unique: String([[${cart.option.oid}]]), //해당 상품을 구분짓는 primary key
-            price: 100, //상품 단가
-            cat1: [[${cart.product.category}]], // 대표 상품의 카테고리 상, 50글자 이내
+            price: 1000, //상품 단가
+            cat1: [[${cart.product.category}]] // 대표 상품의 카테고리 상, 50글자 이내
         }
         console.log(items[i]);
         i++;
@@ -187,9 +187,9 @@
 
         $('#btnPay').click(function() {
             BootPay.request({
-                price: 100,
+                price: 1000,
                 application_id: appId,
-                name: 1,
+                name: [[${cartList[0].product.name}]],
                 pg: 'inicis',
                 method: method,
                 show_agree_window: 0,
