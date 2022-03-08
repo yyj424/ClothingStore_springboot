@@ -42,10 +42,4 @@ public class AccountController {
     public String admin() {
         return "/admin/AdminMain";
     }
-
-    @RequestMapping("/mypage/main")
-    public String myPageMain(Authentication auth, Model model) {
-        model.addAttribute("account", accountService.getAccount(auth.getName()));
-        return "/account/MyPageMain";
-    }
 }

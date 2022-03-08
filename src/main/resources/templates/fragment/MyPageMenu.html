@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <th:block th:fragment="menu">
-<div style="position: absolute; left: 50; top: 50;">
-    <h4 style="margin-bottom: 30px;">마이페이지</h4>
+<div style="position: absolute;">
+    <h4 style="margin-bottom: 30px;"><a th:href="@{/mypage/main}" style="text-decoration-line : none;">마이페이지</a></h4>
     <dl>
-        <dt style="margin-bottom: 5px;">주문관리</dt>
-        <dd style="cursor:pointer;">주문/배송 조회</dd>
+        <dt style="margin-bottom: 5px;"><a>주문관리</a></dt>
+        <dd><a th:href="@{/mypage/orders/1}">주문/배송 조회</a></dd>
     </dl>
     <dl>
-        <dt style="margin-bottom: 5px;">게시물 관리</dt>
-        <dd style="cursor:pointer;">내가 쓴 게시물</dd>
-        <dd style="cursor:pointer;">1:1문의</dd>
+        <dt style="margin-bottom: 5px;"><a>게시물 관리</a></dt>
+        <dd><a th:href="@{/mypage/}">내가 쓴 게시물</a></dd>
+        <dd><a th:href="@{/mypage/}">1:1문의</a></dd>
     </dl>
     <dl>
         <dt style="margin-bottom: 5px;">정보관리</dt>
-        <dd style="cursor:pointer;">회원 정보 변경</dd>
-        <dd style="cursor:pointer;">회원 탈퇴</dd>
+        <dd><a th:href="@{/mypage/}">회원 정보 변경</a></dd>
+        <dd><a th:href="@{/mypage/}">회원 탈퇴</a></dd>
     </dl>
 </div>
 </th:block>

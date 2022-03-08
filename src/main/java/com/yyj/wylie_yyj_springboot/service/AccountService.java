@@ -40,6 +40,8 @@ public class AccountService implements UserDetailsService {
 //        accountRepository.deleteById(id);
 //    }
 
+    public String getUserName(String id) { return accountRepository.getNameByUid(id); }
+
     @Override
     public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
         Account account = accountRepository.getById(uid);

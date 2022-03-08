@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <script src="../scripts/icon.js" crossorigin="anonymous"></script>
+    <title>주문/배송 조회</title>
+    <style>
+        .step {
+            text-align: center;
+            width: 110px;
+            height: 100px;
+            background: gainsboro;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .arrow {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="/fragment/ShopHeader.html :: shopheader"></header>
+<div style="margin:10%;padding-left: 50px;">
+    <div>
+        <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
+    </div>
+    <div style="position: relative;padding: 50px;width:70%;margin-left: 200px;">
+        <h4 style="margin-top: 60px;">주문/배송 조회</h4>
+        <table style="margin-top: 20px;">
+            <thead>
+            <tr>
+                <th>주문번호</th>
+                <th>주문일자</th>
+                <th>상태</th>
+                <th>썸네일</th>
+                <th>상품정보</th>
+                <th>수량</th>
+                <th>가격</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order, index :${orders}">
+                    <td>
+                        <input type="checkbox" name="selected" th:value="${order}" checked>
+                        <input type="hidden" th:value="${cart.price}">
+                    </td>
+                    <td>
+                        <img th:src="${cart.product.thumb}" style="width:100px; height:100px;"/>
+                    </td>
+                    <td>
+                        <h5 id="productName" th:text="${cart.product.name}"></h5>
+                    </td>
+                    <td>
+                        <span th:if="${cart.option.size != null}" th:text="${cart.option.color + ' ' + cart.option.size}"></span>
+                        <span th:if="${cart.option.size == null}" th:text="${cart.option.color}"></span>
+                    </td>
+                    <td th:id="${'idx' + index.index}">
+                        <input type="button" class="minus" value="-" style="font-size:large;background-color:transparent;border: none">
+                        <span th:text="${cart.quantity}" style="margin:5%;"></span>
+                        <input type="button" class="plus" value="+" style="font-size:large;background-color:transparent;border: none">
+                    </td>
+                    <td>
+                        <h5 th:text="${#numbers.formatInteger(cart.price, 3, 'COMMA')}"></h5>
+                    </td>
+                    <td>
+                        <input type='button' class='delCart' th:data-value="${cart.cartId}" value="X">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<footer th:replace="/fragment/Footer.html :: footer"></footer>
+</body>
+</html>

@@ -15,7 +15,7 @@
             text-align: center;
             width: 110px;
             height: 100px;
-            background: ivory;
+            background: gainsboro;
             border-radius: 15px;
             cursor: pointer;
         }
@@ -27,33 +27,40 @@
 </head>
 <body>
 <header th:replace="/fragment/ShopHeader.html :: shopheader"></header>
-<div style="margin:10%;padding-left: 50px;">
+<div style="margin:10%;">
     <div>
         <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
     </div>
-    <div style="border: 5px solid lightgray;border-radius: 15px;position: relative;padding: 50px;width:70%;margin-left: 200px;">
-        <h4>[[${account.uid}]]님 안녕하세요!</h4>
+    <div style="border: 5px solid gainsboro;border-radius: 15px;position: relative;padding: 50px;width:70%;margin-left: 200px;">
+        <h4>[[${name}]]([[${uid}]])님 안녕하세요!</h4>
         <h5 style="margin-top: 60px;">주문 처리 현황</h5>
         <table style="margin-top: 20px;">
             <tr>
-                <td class="step">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=before'|">
                     <p>결제완료</p>
-                    <a>0</a>
+                    <a th:text="${shippedBefore}"></a>
                 </td>
                 <td class="arrow"><i class="fa-solid fa-angle-right"></i></td>
-                <td class="step">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=standby'|">
                     <p>배송준비중</p>
-                    <a>0</a>
+                    <a th:text="${shippedStandBy}"></a>
                 </td>
                 <td class="arrow"><i class="fa-solid fa-angle-right"></i></td>
-                <td class="step">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=begin'|">
                     <p>배송중</p>
-                    <a>0</a>
+                    <a th:text="${shippedBegin}"></a>
                 </td>
                 <td class="arrow"><i class="fa-solid fa-angle-right"></i></td>
-                <td class="step">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=complete'|">
                     <p>배송완료</p>
-                    <a>0</a>
+                    <a th:text="${shippedComplete}"></a>
+                </td>
+                <td style="padding-left: 50px;">
+                    <dl>
+                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1?status=cancel}" th:text="'취소 ' + ${orderCancel}"></a></dd>
+                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1?status=exchange}" th:text="'교환 ' + ${orderExchange}"></a></dd>
+                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1?status=return}" th:text="'반품 ' + ${orderReturn}"></a></dd>
+                    </dl>
                 </td>
             </tr>
         </table>
