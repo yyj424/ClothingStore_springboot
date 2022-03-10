@@ -11,15 +11,17 @@
     <script src="../scripts/icon.js" crossorigin="anonymous"></script>
     <title>주문/배송 조회</title>
     <style>
-        .step {
-            text-align: center;
-            width: 110px;
-            height: 100px;
-            background: gainsboro;
-            border-radius: 15px;
-            cursor: pointer;
+        table {
+            border-top: 1px solid black;
+            border-collapse: collapse;
         }
-        .arrow {
+        th {
+            font-size: 15px;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        tr,td {
+            border-bottom: 1px solid lightgray;
             text-align: center;
             padding: 20px;
         }
@@ -31,7 +33,7 @@
     <div>
         <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
     </div>
-    <div style="position: relative;padding: 50px;width:70%;margin-left: 200px;">
+    <div style="position: relative;width:70%;margin-left: 200px;">
         <h4 style="margin-top: 60px;">주문/배송 조회</h4>
         <table style="margin-top: 20px;">
             <thead>
@@ -48,33 +50,46 @@
             <tbody>
                 <tr th:each="order, index :${orders}">
                     <td>
-                        <input type="checkbox" name="selected" th:value="${order}" checked>
-                        <input type="hidden" th:value="${cart.price}">
+                        <span th:text="${order.orderId}"></span>
                     </td>
                     <td>
-                        <img th:src="${cart.product.thumb}" style="width:100px; height:100px;"/>
+                        <span th:text="${order.orderDate}"></span>
                     </td>
                     <td>
-                        <h5 id="productName" th:text="${cart.product.name}"></h5>
+                        <span th:text="${order.status}"></span>
                     </td>
                     <td>
-                        <span th:if="${cart.option.size != null}" th:text="${cart.option.color + ' ' + cart.option.size}"></span>
-                        <span th:if="${cart.option.size == null}" th:text="${cart.option.color}"></span>
-                    </td>
-                    <td th:id="${'idx' + index.index}">
-                        <input type="button" class="minus" value="-" style="font-size:large;background-color:transparent;border: none">
-                        <span th:text="${cart.quantity}" style="margin:5%;"></span>
-                        <input type="button" class="plus" value="+" style="font-size:large;background-color:transparent;border: none">
+                        <img th:src="${order.thumbnail}" style="width:50px; height:50px;"/>
                     </td>
                     <td>
-                        <h5 th:text="${#numbers.formatInteger(cart.price, 3, 'COMMA')}"></h5>
+                        <span th:text="${order.name}"></span>
+                        <span th:if="${order.option.size != null}" th:text="${'(' + order.option.color + ' ' + order.option.size + ')'}"></span>
+                        <span th:if="${order.option.size == null}" th:text="${'(' + order.option.color + ')'}"></span>
                     </td>
                     <td>
-                        <input type='button' class='delCart' th:data-value="${cart.cartId}" value="X">
+                        <span th:text="${order.qty}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatInteger(order.price, 3, 'COMMA')}"></span>
                     </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div class="pagination" th:if="${ordersPage.totalPages != 0}" style="margin-left: 450px;margin-top: 20px;">
+        <ul th:class="pagination"
+            th:with="start=${T(Math).floor(ordersPage.number/5)*5 + 1},
+                    last=(${start + 4 < ordersPage.totalPages ? start + 4 : ordersPage.totalPages})">
+            <li class="page-item">
+                <a th:href="@{/mypage/orders/1}" class="page-link">&laquo;</a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(start, last)}" th:class="${page == ordersPage.number + 1} ? 'active'">
+                <a th:class="page-link" th:text="${page}" th:href="@{/mypage/orders/{page}(page=${page})}"></a>
+            </li>
+            <li th:class="page-item">
+                <a th:id="tail" th:class="page-link" th:href="@{/mypage/orders/{page}(page=${ordersPage.totalPages})}">&raquo;</a>
+            </li>
+        </ul>
     </div>
 </div>
 <footer th:replace="/fragment/Footer.html :: footer"></footer>

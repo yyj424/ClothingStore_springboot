@@ -28,6 +28,10 @@ public class OrderDetail {
         this.price = price;
     }
 
+    @ManyToOne(targetEntity = Orders.class)
+    @JoinColumn(name="order_id", insertable=false, updatable=false)
+    private Orders orders;
+
     public Long getDid() {
         return did;
     }

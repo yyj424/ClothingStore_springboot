@@ -9,15 +9,17 @@ public class MyPageOrders {
     Date orderDate;
     String status;
     String thumbnail;
+    String name;
     ProductOption option;
     int qty;
     int price;
 
-    public MyPageOrders(Long orderId, Date orderDate, String status, String thumbnail, ProductOption option, int qty, int price) {
+    public MyPageOrders(Long orderId, Date orderDate, String status, String thumbnail, String name, ProductOption option, int qty, int price) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.status = status;
         this.thumbnail = thumbnail;
+        this.name = name;
         this.option = option;
         this.qty = qty;
         this.price = price;
@@ -53,6 +55,14 @@ public class MyPageOrders {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ProductOption getOption() {

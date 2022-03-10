@@ -1,8 +1,13 @@
 package com.yyj.wylie_yyj_springboot.controller;
 
+import com.yyj.wylie_yyj_springboot.domain.entity.OrderDetail;
 import com.yyj.wylie_yyj_springboot.domain.entity.Orders;
+import com.yyj.wylie_yyj_springboot.domain.entity.Product;
+import com.yyj.wylie_yyj_springboot.domain.entity.ProductOption;
+import com.yyj.wylie_yyj_springboot.dto.MyPageOrders;
 import com.yyj.wylie_yyj_springboot.service.AccountService;
 import com.yyj.wylie_yyj_springboot.service.OrderService;
+import com.yyj.wylie_yyj_springboot.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -22,6 +28,9 @@ public class MyPageController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    ProductService productService;
 
     @RequestMapping("/mypage/main")
     public String myPageMain(Authentication auth, Model model) {
@@ -41,13 +50,16 @@ public class MyPageController {
     @RequestMapping("/mypage/orders/{page}")
     public String myPageOrders(Authentication auth, Model model, @PathVariable("page")int page) {
         String uid = auth.getName();
-        model.addAttribute("uid", uid);
-        List<Orders> orders = orderService.getOrderByUid(uid);
-        for (Orders order : orders) {
-            //find order detail > qty,price,opid > Option op > pid > product thumbnail
-
+        Page<OrderDetail> ordersPage = orderService.findAllDetails(uid, page);
+        List<OrderDetail> orders = ordersPage.getContent();
+        List<MyPageOrders> myPageOrders = new ArrayList<>();
+        for (OrderDetail order : orders) {
+            ProductOption option = productService.getOptionById(order.getOpid());
+            Product product = productService.getProductById(option.getPid());
+            myPageOrders.add(new MyPageOrders(order.getOrders().getOrid(), order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
         }
-        //model.addAttribute("orders", );
+        model.addAttribute("orders", myPageOrders);
+        model.addAttribute("ordersPage", ordersPage);
         return "/mypage/MyPageOrders";
     }
 }

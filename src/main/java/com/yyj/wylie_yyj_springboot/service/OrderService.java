@@ -48,7 +48,8 @@ public class OrderService {
     public int getCountByStatus(String uid, String status) {
         return ordersRepository.countByUidAndStatus(uid, status);
     }
-    public OrderDetail getOrderDetail(Long orderId) {
-        return orderDetailRepository.getByOrid(orderId);
+    public Page<OrderDetail> findAllDetails(String uid, int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo - 1, 5);
+        return orderDetailRepository.findAllByOrders_UidOrderByOrders_Orid(pageable, uid);
     }
 }
