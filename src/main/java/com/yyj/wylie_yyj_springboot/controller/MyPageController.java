@@ -11,12 +11,18 @@ import com.yyj.wylie_yyj_springboot.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,9 +54,16 @@ public class MyPageController {
     }
 
     @RequestMapping("/mypage/orders/{page}")
-    public String myPageOrders(Authentication auth, Model model, @PathVariable("page")int page) {
+    public String myPageOrders(@Param("status")String status, @Param("startDate")String startDate, @Param("endDate")String endDate, Authentication auth, Model model, @PathVariable("page")int page) throws ParseException {
         String uid = auth.getName();
-        Page<OrderDetail> ordersPage = orderService.findAllDetails(uid, page);
+        Page<OrderDetail> ordersPage;
+        if (status != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            ordersPage = orderService.findAllDetailsWithStatus(uid, status, formatter.parse(startDate), formatter.parse(endDate), page);
+        }
+        else {
+            ordersPage = orderService.findAllDetails(uid, page);
+        }
         List<OrderDetail> orders = ordersPage.getContent();
         List<MyPageOrders> myPageOrders = new ArrayList<>();
         for (OrderDetail order : orders) {
@@ -60,6 +73,9 @@ public class MyPageController {
         }
         model.addAttribute("orders", myPageOrders);
         model.addAttribute("ordersPage", ordersPage);
+        model.addAttribute("status", status);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
         return "/mypage/MyPageOrders";
     }
 }

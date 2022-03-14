@@ -36,30 +36,30 @@
         <h5 style="margin-top: 60px;">주문 처리 현황</h5>
         <table style="margin-top: 20px;">
             <tr>
-                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=before'|">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=결제완료'|">
                     <p>결제완료</p>
                     <a th:text="${shippedBefore}"></a>
                 </td>
                 <td class="arrow"><i class="fa-solid fa-angle-right"></i></td>
-                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=standby'|">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=배송준비중'|">
                     <p>배송준비중</p>
                     <a th:text="${shippedStandBy}"></a>
                 </td>
                 <td class="arrow"><i class="fa-solid fa-angle-right"></i></td>
-                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=begin'|">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=배송중'|">
                     <p>배송중</p>
                     <a th:text="${shippedBegin}"></a>
                 </td>
                 <td class="arrow"><i class="fa-solid fa-angle-right"></i></td>
-                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=complete'|">
+                <td class="step" th:onclick="|location.href='/mypage/orders/1?status=배송완료'|">
                     <p>배송완료</p>
                     <a th:text="${shippedComplete}"></a>
                 </td>
                 <td style="padding-left: 50px;">
                     <dl>
-                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1?status=cancel}" th:text="'취소 ' + ${orderCancel}"></a></dd>
-                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1?status=exchange}" th:text="'교환 ' + ${orderExchange}"></a></dd>
-                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1?status=return}" th:text="'반품 ' + ${orderReturn}"></a></dd>
+                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1(status='취소')}" th:text="'취소 ' + ${orderCancel}"></a></dd>
+                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1(status='교환')}" th:text="'교환 ' + ${orderExchange}"></a></dd>
+                        <dd style="padding-bottom: 5px;"><a th:href="@{/mypage/orders/1(status='반품')}" th:text="'반품 ' + ${orderReturn}"></a></dd>
                     </dl>
                 </td>
             </tr>

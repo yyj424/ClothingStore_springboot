@@ -14,5 +14,4 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     int countByUidAndStatus(String uid, String status);
     List<Orders> findAllByUid(String uid);
     Page<Orders> findAllByUid(Pageable pageable, String uid);
-    Page<Orders> findAllByUidAndStatus(Pageable pageable, String uid, String status);
 }
