@@ -34,6 +34,14 @@ public class BoardService {
         Pageable pageable = PageRequest.of(pageNo - 1, 5, Sort.by("date").descending());
         return boardRepository.findAll(pageable);
     }
+    public Page<Board> getPostListByUid(int pageNo, String uid) {
+        Pageable pageable = PageRequest.of(pageNo - 1, 5, Sort.by("date").descending());
+        return boardRepository.findAllByUid(pageable, uid);
+    }
+    public Page<Board> getPostListByUidAndKeyword(int pageNo, String uid, String keyword) {
+        Pageable pageable = PageRequest.of(pageNo - 1, 5, Sort.by("date").descending());
+        return boardRepository.findAllByUidAndTitleContainingIgnoreCase(pageable, uid, keyword);
+    }
     public Page<Board> filteringByCategory(int category, int pageNo) {
         Pageable pageable = PageRequest.of(pageNo - 1, 5, Sort.by("date").descending());
         return boardRepository.findAllByCategory(pageable, category);

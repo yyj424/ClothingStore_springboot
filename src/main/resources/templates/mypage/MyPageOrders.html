@@ -12,18 +12,22 @@
     <title>주문/배송 조회</title>
     <style>
         table {
-            border-top: 1px solid black;
+            border-top: 1px solid lightgray;
             border-collapse: collapse;
         }
         th {
             font-size: 15px;
             text-align: center;
-            border-bottom: 1px solid black;
+            border-bottom: 1px solid lightgray;
+            padding: 10px;
         }
         tr,td {
-            border-bottom: 1px solid lightgray;
             text-align: center;
             padding: 20px;
+        }
+        .tbody:hover {
+            cursor: pointer;
+            background: #ECECEC;
         }
     </style>
 </head>
@@ -35,7 +39,7 @@
     </div>
     <div style="position: relative;width:70%;margin-left: 200px;">
         <h4 style="margin-top: 60px;display: inline">주문/배송 조회</h4>
-        <form th:action="@{/mypage/orders/1}" method="get" style="display: inline" id="selectForm">
+        <form th:action="@{/mypage/orders/1}" method="get" style="margin-left: 10px;display: inline" id="selectForm">
             <select name="status" id="status" th:value="${status}">
                 <option value="전체" th:selected="${status}=='전체'">전체</option>
                 <option value="결제완료" th:selected="${status}=='결제완료'">결제완료</option>
@@ -46,7 +50,8 @@
                 <option value="교환" th:selected="${status}=='교환'">교환</option>
                 <option value="반품" th:selected="${status}=='반품'">반품</option>
             </select>
-            <input type="date" id="startDate" name="startDate">
+            <input type="date" id="startDate" name="startDate" style="margin-left: 10px;">
+            <span style="font-size: 20px;"> ~ </span>
             <input type="date" id="endDate" name="endDate">
         </form>
         <table style="margin-top: 20px;" th:if="${ordersPage.totalPages != 0}">
@@ -62,9 +67,9 @@
             </tr>
             </thead>
             <tbody>
-                <tr th:each="order, index :${orders}">
+                <tr th:each="order, index :${orders}" class="tbody">
                     <td>
-                        <span th:text="${order.orderId}"></span>
+                        <span th:text="${order.orderId}" style="color: black"></span>
                     </td>
                     <td>
                         <span th:text="${order.orderDate}"></span>
@@ -128,31 +133,32 @@
 </body>
 <script th:inline="javascript">
     $(document).ready (function() {
-        console.log("status: " + [[${status}]]);
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var startMonth = date.getMonth() - 1;
+        month = month >= 10 ? month : '0' + month;
+        startMonth = startMonth >= 10 ? startMonth : '0' + startMonth;
+        var day = date.getDate();
+        day = day >= 10 ? day : '0' + day;
+        $("#endDate").attr("max", year + "-" + month + "-" + day);
+
         if ([[${status}]] != null) {
             $("#endDate").val([[${endDate}]]);
-            $("#endDate").attr("max", [[${endDate}]]);
+            $("#endDate").attr("min", [[${startDate}]]);
             $("#startDate").val([[${startDate}]]);
+            $("#startDate").attr("max", [[${endDate}]]);
         }
         else {
-            var date = new Date();
-            var year = date.getFullYear();
-            var month = date.getMonth() + 1;
-            var startMonth = date.getMonth() - 1;
-            month = month >= 10 ? month : '0' + month;
-            startMonth = startMonth >= 10 ? startMonth : '0' + startMonth;
-            var day = date.getDate();
-            day = day >= 10 ? day : '0' + day;
-
             $("#endDate").val(year + "-" + month + "-" + day);
-            $("#endDate").attr("max", year + "-" + month + "-" + day);
+            $("#endDate").attr("min", year + "-" + startMonth + "-" + day);
             $("#startDate").val(year + "-" + startMonth + "-" + day);
+            $("#startDate").attr("max", year + "-" + month + "-" + day);
         }
 
         $('#status').on('change', function () {
             $("#selectForm").submit();
         });
-        //시작날짜 변경 시 끝날짜는 시작일 이후 날짜만 선택되도록 변경 필요
         $('#startDate').on('change', function () {
             $("#selectForm").submit();
         });

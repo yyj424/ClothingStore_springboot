@@ -1,11 +1,9 @@
 package com.yyj.wylie_yyj_springboot.controller;
 
-import com.yyj.wylie_yyj_springboot.domain.entity.OrderDetail;
-import com.yyj.wylie_yyj_springboot.domain.entity.Orders;
-import com.yyj.wylie_yyj_springboot.domain.entity.Product;
-import com.yyj.wylie_yyj_springboot.domain.entity.ProductOption;
+import com.yyj.wylie_yyj_springboot.domain.entity.*;
 import com.yyj.wylie_yyj_springboot.dto.MyPageOrders;
 import com.yyj.wylie_yyj_springboot.service.AccountService;
+import com.yyj.wylie_yyj_springboot.service.BoardService;
 import com.yyj.wylie_yyj_springboot.service.OrderService;
 import com.yyj.wylie_yyj_springboot.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -23,20 +21,19 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
 public class MyPageController {
     @Autowired
     AccountService accountService;
-
     @Autowired
     OrderService orderService;
-
     @Autowired
     ProductService productService;
+    @Autowired
+    BoardService boardService;
 
     @RequestMapping("/mypage/main")
     public String myPageMain(Authentication auth, Model model) {
@@ -59,17 +56,36 @@ public class MyPageController {
         Page<OrderDetail> ordersPage;
         if (status != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            ordersPage = orderService.findAllDetailsWithStatus(uid, status, formatter.parse(startDate), formatter.parse(endDate), page);
+            if (startDate == null || endDate == null) {
+                Calendar cal = Calendar.getInstance();
+                Date end = cal.getTime();
+                endDate = formatter.format(end);
+                cal.add(Calendar.MONTH, -2);
+                Date start = cal.getTime();
+                startDate = formatter.format(start);
+                System.out.println("$$$$$$$$$$$$$$$$" + startDate +",,,,," + endDate);
+                ordersPage = orderService.findAllDetailsWithStatus(uid, status, start, end, page);
+            }
+            else {
+                ordersPage = orderService.findAllDetailsWithStatus(uid, status, formatter.parse(startDate), formatter.parse(endDate), page);
+            }
         }
         else {
             ordersPage = orderService.findAllDetails(uid, page);
         }
         List<OrderDetail> orders = ordersPage.getContent();
         List<MyPageOrders> myPageOrders = new ArrayList<>();
+        Long id = 0L;
         for (OrderDetail order : orders) {
             ProductOption option = productService.getOptionById(order.getOpid());
             Product product = productService.getProductById(option.getPid());
-            myPageOrders.add(new MyPageOrders(order.getOrders().getOrid(), order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
+            if (!Objects.equals(id, order.getOrders().getOrid())) {
+                myPageOrders.add(new MyPageOrders(order.getOrders().getOrid(), order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
+                id = order.getOrders().getOrid();
+            }
+            else {
+                myPageOrders.add(new MyPageOrders(null, order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
+            }
         }
         model.addAttribute("orders", myPageOrders);
         model.addAttribute("ordersPage", ordersPage);
@@ -77,5 +93,21 @@ public class MyPageController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
         return "/mypage/MyPageOrders";
+    }
+
+    @RequestMapping("/mypage/board/{page}")
+    public String myPageBoardList(Authentication auth, @PathVariable("page") int page, @Param("keyword")String keyword, Model model) {
+        Page<Board> boardPage;
+        if (keyword != null) {
+            boardPage = boardService.getPostListByUidAndKeyword(page, auth.getName(), keyword);
+            model.addAttribute("keyword", keyword);
+        }
+        else {
+            boardPage = boardService.getPostListByUid(page, auth.getName());
+        }
+        List<Board> boardList = boardPage.getContent();
+        model.addAttribute("boardList", boardList);
+        model.addAttribute("boardPage", boardPage);
+        return "/mypage/MyPageBoardList";
     }
 }
