@@ -8,6 +8,7 @@ import com.yyj.wylie_yyj_springboot.service.OrderService;
 import com.yyj.wylie_yyj_springboot.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
@@ -93,6 +94,22 @@ public class MyPageController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
         return "/mypage/MyPageOrders";
+    }
+
+    @RequestMapping("/mypage/orders/detail/{id}")
+    public String myPageOrders(@PathVariable("id") Long id, Authentication auth, Model model) {
+        Orders order = orderService.findOrder(id);
+        List<OrderDetail> details = orderService.findOrderDetails(id);
+        List<MyPageOrders> myPageOrders = new ArrayList<>();
+        for (OrderDetail detail : details) {
+            ProductOption option = productService.getOptionById(detail.getOpid());
+            Product product = productService.getProductById(option.getPid());
+            myPageOrders.add(new MyPageOrders(detail.getOrders().getStatus(), product.getThumb(), product.getName(), option, detail.getQuantity(), detail.getPrice()));
+        }
+        model.addAttribute("account", accountService.getAccount(auth.getName()));
+        model.addAttribute("order", order);
+        model.addAttribute("details", myPageOrders);
+        return "/mypage/MyPageOrdersDetail";
     }
 
     @RequestMapping("/mypage/board/{page}")

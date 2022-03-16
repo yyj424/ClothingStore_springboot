@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,31 +36,26 @@ public class OrderService {
     public Long findLastOid() {
         return ordersRepository.findLastOid();
     }
-    public List<Orders> getOrderByUid(String uid) {
-        return ordersRepository.findAllByUid(uid);
-    }
-    public Page<Orders> getOrderByUid(String uid, int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo - 1, 10);
-        return ordersRepository.findAllByUid(pageable, uid);
-    }
+    public Orders findOrder(Long id) { return ordersRepository.getById(id); }
+    public List<OrderDetail> findOrderDetails(Long id) { return orderDetailRepository.findAllByOrders_Orid(id); }
     public int getCountByStatus(String uid, String status) {
         return ordersRepository.countByUidAndStatus(uid, status);
     }
     public Page<OrderDetail> findAllDetails(String uid, int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo - 1, 5);
-        return orderDetailRepository.findAllByOrders_UidOrderByOrders_Orid(pageable, uid);
+        Pageable pageable = PageRequest.of(pageNo - 1, 5, Sort.by("orders.orid").descending());
+        return orderDetailRepository.findAllByOrders_Uid(pageable, uid);
     }
     public Page<OrderDetail> findAllDetailsWithStatus(String uid, String status, Date start, Date end, int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo - 1, 5);
+        Pageable pageable = PageRequest.of(pageNo - 1, 5, Sort.by("orders.orid").descending());
         Calendar cal = Calendar.getInstance();
         cal.setTime(end);
         cal.add(Calendar.DATE, 1);
         end = new Date(cal.getTimeInMillis());
         if (status.equals("전체")) {
-            return orderDetailRepository.findAllByOrders_UidAndOrders_DateBetweenOrderByOrders_Orid(pageable, uid, start, end);
+            return orderDetailRepository.findAllByOrders_UidAndOrders_DateBetween(pageable, uid, start, end);
         }
         else {
-            return orderDetailRepository.findAllByOrders_UidAndOrders_StatusAndOrders_DateBetweenOrderByOrders_Orid(pageable, uid, status, start, end);
+            return orderDetailRepository.findAllByOrders_UidAndOrders_StatusAndOrders_DateBetween(pageable, uid, status, start, end);
         }
     }
 }

@@ -25,6 +25,15 @@ public class MyPageOrders {
         this.price = price;
     }
 
+    public MyPageOrders(String status, String thumbnail, String name, ProductOption option, int qty, int price) {
+        this.status = status;
+        this.thumbnail = thumbnail;
+        this.name = name;
+        this.option = option;
+        this.qty = qty;
+        this.price = price;
+    }
+
     public Long getOrderId() {
         return orderId;
     }

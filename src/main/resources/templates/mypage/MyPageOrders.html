@@ -23,7 +23,7 @@
         }
         tr,td {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
         }
         .tbody:hover {
             cursor: pointer;
@@ -37,7 +37,7 @@
     <div>
         <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
     </div>
-    <div style="position: relative;width:70%;margin-left: 200px;">
+    <div style="position: relative;margin-left: 200px;">
         <h4 style="margin-top: 60px;display: inline">주문/배송 조회</h4>
         <form th:action="@{/mypage/orders/1}" method="get" style="margin-left: 10px;display: inline" id="selectForm">
             <select name="status" id="status" th:value="${status}">
@@ -59,23 +59,21 @@
             <tr>
                 <th>주문번호</th>
                 <th>주문일자</th>
-                <th>상태</th>
                 <th>썸네일</th>
                 <th>상품정보</th>
                 <th>수량</th>
                 <th>가격</th>
+                <th>상태</th>
+                <th>&nbsp;</th>
             </tr>
             </thead>
             <tbody>
-                <tr th:each="order, index :${orders}" class="tbody">
+                <tr th:each="order, index :${orders}" class="tbody" th:onclick="|location.href='/mypage/orders/detail/${order.orderId}'|">
                     <td>
                         <span th:text="${order.orderId}" style="color: black"></span>
                     </td>
                     <td>
                         <span th:text="${order.orderDate}"></span>
-                    </td>
-                    <td>
-                        <span th:text="${order.status}"></span>
                     </td>
                     <td>
                         <img th:src="${order.thumbnail}" style="width:50px; height:50px;"/>
@@ -90,6 +88,14 @@
                     </td>
                     <td>
                         <span th:text="${#numbers.formatInteger(order.price, 3, 'COMMA')}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${order.status}"></span>
+                    </td>
+                    <td>
+                        <button id="btnCancel" th:if="${order.status.equals('결제완료')}" type="button" class="btn btn-outline-primary" style="font-size: 10px;padding: 7px;">주문취소</button>
+                        <button id="btnTracking" th:if="${order.status.equals('배송준비중') || order.status.equals('배송중')}" type="button" class="btn btn-outline-primary" style="font-size: 10px;padding: 7px;">배송조회</button>
+                        <button id="btnExcAndRet" th:if="${order.status.equals('배송완료')}" type="button" class="btn btn-outline-primary" style="font-size: 10px;padding: 7px;">교환/반품</button>
                     </td>
                 </tr>
             </tbody>

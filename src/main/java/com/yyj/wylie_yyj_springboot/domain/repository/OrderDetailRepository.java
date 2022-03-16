@@ -6,9 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
+import java.util.List;
 
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
-    Page<OrderDetail> findAllByOrders_UidOrderByOrders_Orid(Pageable pageable, String uid);
-    Page<OrderDetail> findAllByOrders_UidAndOrders_StatusAndOrders_DateBetweenOrderByOrders_Orid(Pageable pageable, String uid, String status, Date startDate, Date endDate);
-    Page<OrderDetail> findAllByOrders_UidAndOrders_DateBetweenOrderByOrders_Orid(Pageable pageable, String uid, Date startDate, Date endDate);
+    List<OrderDetail> findAllByOrders_Orid(Long orid);
+    Page<OrderDetail> findAllByOrders_Uid(Pageable pageable, String uid);
+    Page<OrderDetail> findAllByOrders_UidAndOrders_StatusAndOrders_DateBetween(Pageable pageable, String uid, String status, Date startDate, Date endDate);
+    Page<OrderDetail> findAllByOrders_UidAndOrders_DateBetween(Pageable pageable, String uid, Date startDate, Date endDate);
 }
