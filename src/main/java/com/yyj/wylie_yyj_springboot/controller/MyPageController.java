@@ -64,7 +64,6 @@ public class MyPageController {
                 cal.add(Calendar.MONTH, -2);
                 Date start = cal.getTime();
                 startDate = formatter.format(start);
-                System.out.println("$$$$$$$$$$$$$$$$" + startDate +",,,,," + endDate);
                 ordersPage = orderService.findAllDetailsWithStatus(uid, status, start, end, page);
             }
             else {
@@ -76,18 +75,19 @@ public class MyPageController {
         }
         List<OrderDetail> orders = ordersPage.getContent();
         List<MyPageOrders> myPageOrders = new ArrayList<>();
-        Long id = 0L;
+        List<Long> idList = new ArrayList<>();
         for (OrderDetail order : orders) {
             ProductOption option = productService.getOptionById(order.getOpid());
             Product product = productService.getProductById(option.getPid());
-            if (!Objects.equals(id, order.getOrders().getOrid())) {
-                myPageOrders.add(new MyPageOrders(order.getOrders().getOrid(), order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
-                id = order.getOrders().getOrid();
+            if (!idList.contains(order.getOrders().getOrid())) {
+                idList.add(order.getOrders().getOrid());
             }
             else {
-                myPageOrders.add(new MyPageOrders(null, order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
+                idList.add(null);
             }
+            myPageOrders.add(new MyPageOrders(order.getOrders().getOrid(), order.getOrders().getDate(), order.getOrders().getStatus(), product.getThumb(), product.getName(), option, order.getQuantity(), order.getPrice()));
         }
+        model.addAttribute("idList", idList);
         model.addAttribute("orders", myPageOrders);
         model.addAttribute("ordersPage", ordersPage);
         model.addAttribute("status", status);

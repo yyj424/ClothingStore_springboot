@@ -71,7 +71,8 @@
             <form class="d-flex" th:action="@{/search/1}" method="get">
                 <input type="hidden" th:if="${category != null}" name="category" th:value="${category}"/>
                 <input type="hidden" th:if="${category == null}" name="category" th:value="0"/>
-                <input class="form-control me-sm-2" name="keyword" type="text">
+                <input class="form-control me-sm-2" th:if="${keyword != null}" name="keyword" type="text" th:value="${keyword}">
+                <input class="form-control me-sm-2" th:if="${keyword == null}" name="keyword" type="text">
                 <button class="btn btn-secondary my-2 my-sm-0" type="submit" style="margin-left: 10px;"><i class="fa-solid fa-magnifying-glass" style="font-size: 15px;"></i></button>
             </form>
         </div>

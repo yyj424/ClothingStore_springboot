@@ -70,7 +70,7 @@
             <tbody>
                 <tr th:each="order, index :${orders}" class="tbody" th:onclick="|location.href='/mypage/orders/detail/${order.orderId}'|">
                     <td>
-                        <span th:text="${order.orderId}" style="color: black"></span>
+                        <span th:if="${idList.get(index.index) != null}" th:text="${order.orderId}" style="color: black"></span>
                     </td>
                     <td>
                         <span th:text="${order.orderDate}"></span>

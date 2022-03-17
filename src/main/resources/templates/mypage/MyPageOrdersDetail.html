@@ -31,9 +31,9 @@
         <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
     </div>
     <div style="position: relative;width:70%;margin-left: 200px;">
-        <h4 style="margin-top: 60px;">주문/배송 상세</h4>
-        <span style="margin-top: 60px;">주문 번호 : [[${order.orid}]] / 주문일 : [[${order.date}]]</span>
-        <table style="margin-top: 20px;">
+        <h5 style="margin-top: 30px;">주문 번호 : [[${order.orid}]] / 주문일 : [[${order.date}]]</h5>
+        <table style="margin-top: 5px;width: 700px;
+            border-bottom: 1px solid lightgray;">
             <tr th:each="detail, index :${details}" class="details">
                 <td class="details">
                     <img th:src="${detail.thumbnail}" style="width:50px; height:50px;"/>
@@ -54,8 +54,8 @@
                 </td>
             </tr>
         </table>
-        <h5 style="margin-top: 20px;">주문자 정보</h5>
-        <table>
+        <h5 style="margin-top: 50px;">주문자 정보</h5>
+        <table style="width: 500px;">
             <tr>
                 <td class="inform">
                     <span th:text="${account.name}"></span>
@@ -78,7 +78,7 @@
             </tr>
         </table>
         <h5 style="margin-top: 20px;">배송 정보</h5>
-        <table>
+        <table style="width: 500px;">
             <tr>
                 <td class="inform">
                     <span th:text="${order.name}"></span>
@@ -96,35 +96,47 @@
             </tr>
         </table>
         <h5 style="margin-top: 20px;">결제 정보</h5>
-        <table>
+        <table style="width: 500px;">
             <tr>
                 <td class="inform">결제 수단</td>
-                <td class="inform">
+                <td>
                     <span th:text="${order.pay}"></span>
                 </td>
             </tr>
-            <tr th:if="${order.totalPrice <= 50000}">
+            <tr>
                 <td class="inform">합계</td>
-                <span th:text="${order.totalPrice - 2500}"></span>
+                <td>
+                    <span th:if="${order.totalPrice <= 50000}" th:text="${#numbers.formatInteger(order.totalPrice - 2500, 3, 'COMMA')}"></span>
+                    <span th:if="${order.totalPrice > 50000}" th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')}"></span>
+                </td>
             </tr>
-            <tr th:if="${order.totalPrice <= 50000}">
+            <tr>
                 <td class="inform">배송비</td>
-                <td class="inform">2500</td>
+                <td th:if="${order.totalPrice <= 50000}">+2,500</td>
+                <td th:if="${order.totalPrice > 50000}">+0</td>
             </tr>
             <tr>
                 <td class="inform">결제 금액</td>
-                <td class="inform">
-                    <span th:text="${order.totalPrice}"></span>
+                <td>
+                    <span th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')}"></span>
                 </td>
             </tr>
         </table>
+        <div style="margin-top: 50px;">
+            <button id="btnCancel" th:if="${order.status.equals('결제완료')}" type="button" class="btn btn-outline-primary" style="width: 150px;">주문취소</button>
+            <button id="btnTracking" th:if="${order.status.equals('배송준비중') || order.status.equals('배송중')}" type="button" class="btn btn-outline-primary" style="width: 150px;">배송조회</button>
+            <button id="btnExcAndRet" th:if="${order.status.equals('배송완료')}" type="button" class="btn btn-outline-primary" style="width: 150px;">교환/반품</button>
+            <button id="btnList" type="button" class="btn btn-outline-secondary" style="margin-left: 20px;width: 150px;">목록</button>
+        </div>
     </div>
 </div>
 <footer th:replace="/fragment/Footer.html :: footer"></footer>
 </body>
 <script th:inline="javascript">
     $(document).ready (function() {
-
+        $("#btnList").click(function(){
+            window.history.back();
+        });
     });
 </script>
 </html>
