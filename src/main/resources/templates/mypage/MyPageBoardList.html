@@ -28,7 +28,7 @@
     </div>
     <div style="position: relative;width:70%;margin-left: 200px;">
         <h4 style="margin-top: 60px;display: inline">내가 쓴 게시물</h4>
-        <form th:action="@{/mypage/board/1}" method="get" style="display: inline" id="dateForm">
+        <form th:action="@{/mypage/board/list/1}" method="get" style="display: inline" id="dateForm">
             <input th:if="${keyword != null}" type="text" name="keyword" style="margin-left: 10px;" th:value="${keyword}">
             <input th:if="${keyword == null}" type="text" name="keyword" style="margin-left: 10px;" placeholder="제목을 검색하세요">
             <button type="submit" style="margin-left: 5px;border: 1px solid lightgray;padding-left: 5px;padding-right: 5px;">검색</button>
@@ -43,7 +43,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="board, index :${boardList}" class="table-secondary" style="cursor:pointer;">
+            <tr th:each="board, index :${boardList}" class="table-secondary" style="cursor:pointer;" th:onclick="|location.href='/mypage/board/${board.bid}'|">
                 <td>
                     <span th:text="${board.bid}"></span>
                 </td>
@@ -68,13 +68,13 @@
             th:with="start=${T(Math).floor(boardPage.number/5)*5 + 1},
                     last=(${start + 4 < boardPage.totalPages ? start + 4 : boardPage.totalPages})">
             <li class="page-item">
-                <a th:href="@{/mypage/board/1}" class="page-link">&laquo;</a>
+                <a th:href="@{/mypage/board/list/1}" class="page-link">&laquo;</a>
             </li>
             <li th:each="page: ${#numbers.sequence(start, last)}" th:class="${page == boardPage.number + 1} ? 'active'">
-                <a th:class="page-link" th:text="${page}" th:href="@{/mypage/board/{page}(page=${page})}"></a>
+                <a th:class="page-link" th:text="${page}" th:href="@{/mypage/board/list/{page}(page=${page})}"></a>
             </li>
             <li th:class="page-item">
-                <a th:id="tail" th:class="page-link" th:href="@{/mypage/board/{page}(page=${boardPage.totalPages})}">&raquo;</a>
+                <a th:id="tail" th:class="page-link" th:href="@{/mypage/board/list/{page}(page=${boardPage.totalPages})}">&raquo;</a>
             </li>
         </ul>
     </div>
@@ -83,13 +83,13 @@
             th:with="start=${T(Math).floor(boardPage.number/5)*5 + 1},
                     last=(${start + 4 < boardPage.totalPages ? start + 4 : boardPage.totalPages})">
             <li class="page-item">
-                <a th:href="@{/mypage/board/1(keyword=${keyword})}" class="page-link">&laquo;</a>
+                <a th:href="@{/mypage/board/list/1(keyword=${keyword})}" class="page-link">&laquo;</a>
             </li>
             <li th:each="page: ${#numbers.sequence(start, last)}" th:class="${page == boardPage.number + 1} ? 'active'">
-                <a th:class="page-link" th:text="${page}" th:href="@{/mypage/board/{page}(page=${page}, keyword=${keyword})}"></a>
+                <a th:class="page-link" th:text="${page}" th:href="@{/mypage/board/list/{page}(page=${page}, keyword=${keyword})}"></a>
             </li>
             <li th:class="page-item">
-                <a th:id="tail" th:class="page-link" th:href="@{/mypage/board/{page}(page=${boardPage.totalPages}, keyword=${keyword})}">&raquo;</a>
+                <a th:id="tail" th:class="page-link" th:href="@{/mypage/board/list/{page}(page=${boardPage.totalPages}, keyword=${keyword})}">&raquo;</a>
             </li>
         </ul>
     </div>

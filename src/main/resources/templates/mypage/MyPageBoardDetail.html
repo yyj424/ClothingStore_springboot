@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <script src="/../scripts/icon.js" crossorigin="anonymous"></script>
+    <title>내가 쓴 게시물</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            width: 20%;
+            font-size: 15px;
+            border-bottom: 1px solid lightgray;
+            border-right: 1px solid lightgray;
+            padding: 10px;
+        }
+        tr,td {
+            border-bottom: 1px solid lightgray;
+            text-align: left;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="/fragment/ShopHeader.html :: shopheader"></header>
+<div style="margin:10%;padding-left: 50px;">
+    <div>
+        <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
+    </div>
+    <div style="position: relative;width:70%;margin-left: 200px;">
+        <h4 style="margin-top: 60px;display: inline">내가 쓴 게시물</h4>
+        <div style="border: 1px solid lightgray;margin-top: 20px;width: 70%;">
+            <form id="boardUpdateForm" method="post" th:action="@{'/mypage/board/update/' + ${board.bid}}">
+                <table>
+                    <tr>
+                        <th>
+                            게시물 번호
+                        </th>
+                        <td>
+                            [[${board.bid}]]
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            카테고리
+                        </th>
+                        <td>
+                            <select name="category" style="width: 50px" th:value="${board.category}">
+                                <option value="1" th:selected="${board.category}=='1'">1</option>
+                                <option value="2" th:selected="${board.category}=='2'">2</option>
+                                <option value="3" th:selected="${board.category}=='3'">3</option>
+                                <option value="4" th:selected="${board.category}=='4'">4</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            제목
+                        </th>
+                        <td>
+                            <input class="form-control" type="text" name="title" th:value="${board.title}">
+                        </td>
+                    </tr>
+                </table>
+                <div style="padding: 7px;">
+                    <textarea class="form-control" style="height: 400px;" name="content" th:text="${board.content}"></textarea>
+                </div>
+            </form>
+        </div>
+        <div style="margin-top: 20px; margin-left: 40px;">
+            <button id="btnUpdate" type="button" class="btn btn-outline-success" style="width: 100px;">수정</button>
+            <button id="btnDelete" type="button" class="btn btn-outline-danger" style="margin-left: 20px;width: 100px;">삭제</button>
+            <button id="btnList" type="button" class="btn btn-outline-primary" style="margin-left: 20px;width: 100px;" onclick="history.back(-1)">목록</button>
+            <button type="button" class="btn btn-outline-warning" style="margin-left: 20px;width: 100px;" th:onclick="|location.href='/board/${board.bid}?cmtPage=1'|">게시판</button>
+        </div>
+    </div>
+</div>
+<footer th:replace="/fragment/Footer.html :: footer"></footer>
+</body>
+<script th:inline="javascript">
+    $(document).ready (function() {
+        $("#btnUpdate").click(function(){
+            $("#boardUpdateForm").submit();
+        });
+        $("#btnDelete").click(function(){
+            if (confirm("해당 게시물을 삭제하시겠습니까?")){
+                location.href = "/mypage/board/delete/" + [[${board.bid}]];
+            }
+        });
+    });
+</script>
+</html>

@@ -112,7 +112,7 @@ public class MyPageController {
         return "/mypage/MyPageOrdersDetail";
     }
 
-    @RequestMapping("/mypage/board/{page}")
+    @RequestMapping("/mypage/board/list/{page}")
     public String myPageBoardList(Authentication auth, @PathVariable("page") int page, @Param("keyword")String keyword, Model model) {
         Page<Board> boardPage;
         if (keyword != null) {
@@ -126,5 +126,28 @@ public class MyPageController {
         model.addAttribute("boardList", boardList);
         model.addAttribute("boardPage", boardPage);
         return "/mypage/MyPageBoardList";
+    }
+
+    @RequestMapping("/mypage/board/{id}")
+    public String myPageBoard(Authentication auth, @PathVariable("id") Long id, Model model) {
+        Board board = boardService.getPost(id);
+        model.addAttribute("board", board);
+        return "/mypage/MyPageBoardDetail";
+    }
+
+    @RequestMapping("/mypage/board/update/{id}")
+    public String myPageBoardUpdate(Authentication auth, @PathVariable("id") Long id, Board board, Model model) {
+        Board updateBoard = boardService.getPost(id);
+        updateBoard.setCategory(board.getCategory());
+        updateBoard.setTitle(board.getTitle());
+        updateBoard.setContent(board.getContent());
+        boardService.savePost(updateBoard);
+        return "redirect:/mypage/board/list/1";
+    }
+
+    @RequestMapping("/mypage/board/delete/{id}")
+    public String delete(@PathVariable("id") Long id) {
+        boardService.deletePost(id);
+        return "redirect:/mypage/board/list/1";
     }
 }

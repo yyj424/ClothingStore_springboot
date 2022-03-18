@@ -21,7 +21,7 @@
         <div>
             제목 : <input type="text" name="title" class="form-control" th:value="${board.title}"> <br>
             작성자 : <span th:text="${board.uid}"></span> <br>
-            내용 : <textarea class="form-control" name="content" rows="5" style="height: 61px;" th:text="${board.content}"></textarea>
+            내용 : <textarea class="form-control" name="content" rows="5" style="height: 500px;" th:text="${board.content}"></textarea>
         </div>
         <button type="submit" class="btn btn-outline-primary">수정</button>
     </form>
