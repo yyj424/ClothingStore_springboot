@@ -8,20 +8,19 @@ import com.yyj.wylie_yyj_springboot.service.OrderService;
 import com.yyj.wylie_yyj_springboot.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -149,5 +148,28 @@ public class MyPageController {
     public String delete(@PathVariable("id") Long id) {
         boardService.deletePost(id);
         return "redirect:/mypage/board/list/1";
+    }
+
+    @RequestMapping("/mypage/account")
+    public String account(Authentication auth, Model model) {
+        Account account = accountService.getAccount(auth.getName());
+        model.addAttribute("account", account);
+        return "/mypage/MyPageAccount";
+    }
+
+    @RequestMapping("/mypage/account/update")
+    @ResponseBody
+    public void accountUpdate(Authentication auth, @RequestBody Map map) {
+        Account updateAccount = accountService.getAccount(auth.getName());
+        updateAccount.setName(map.get("name").toString());
+        if (map.get("pw") != null) {
+            updateAccount.setPw(map.get("pw").toString());
+        }
+        updateAccount.setPhone(map.get("phone").toString());
+        updateAccount.setEmail(map.get("email").toString());
+        updateAccount.setCode(map.get("postcode").toString());
+        updateAccount.setAddr1(map.get("roadAddress").toString());
+        updateAccount.setAddr2(map.get("detailAddress").toString());
+        accountService.saveAccount(updateAccount);
     }
 }
