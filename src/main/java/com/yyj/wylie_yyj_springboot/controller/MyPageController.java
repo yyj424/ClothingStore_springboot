@@ -111,6 +111,39 @@ public class MyPageController {
         return "/mypage/MyPageOrdersDetail";
     }
 
+
+    @RequestMapping("/mypage/orders/cancel/{id}")
+    public String cancel(@PathVariable("id") Long id, Model model) {
+        Orders order = orderService.findOrder(id);
+        List<OrderDetail> details = orderService.findOrderDetails(id);
+        List<MyPageOrders> myPageOrders = new ArrayList<>();
+        for (OrderDetail detail : details) {
+            ProductOption option = productService.getOptionById(detail.getOpid());
+            Product product = productService.getProductById(option.getPid());
+            myPageOrders.add(new MyPageOrders(detail.getDid(), detail.getOrders().getStatus(), product.getThumb(), product.getName(), option, detail.getQuantity(), detail.getPrice()));
+        }
+        model.addAttribute("change", "주문 취소");
+        model.addAttribute("order", order);
+        model.addAttribute("details", myPageOrders);
+        return "/mypage/MyPageOrdersChange";
+    }
+
+    @RequestMapping("/mypage/orders/exc-ret/{id}")
+    public String exchangeOrReturn(@PathVariable("id") Long id, Authentication auth, Model model) {
+        Orders order = orderService.findOrder(id);
+        List<OrderDetail> details = orderService.findOrderDetails(id);
+        List<MyPageOrders> myPageOrders = new ArrayList<>();
+        for (OrderDetail detail : details) {
+            ProductOption option = productService.getOptionById(detail.getOpid());
+            Product product = productService.getProductById(option.getPid());
+            myPageOrders.add(new MyPageOrders(detail.getDid(), detail.getOrders().getStatus(), product.getThumb(), product.getName(), option, detail.getQuantity(), detail.getPrice()));
+        }
+        model.addAttribute("change", "교환/반품");
+        model.addAttribute("order", order);
+        model.addAttribute("details", myPageOrders);
+        return "/mypage/MyPageOrdersChange";
+    }
+
     @RequestMapping("/mypage/board/list/{page}")
     public String myPageBoardList(Authentication auth, @PathVariable("page") int page, @Param("keyword")String keyword, Model model) {
         Page<Board> boardPage;

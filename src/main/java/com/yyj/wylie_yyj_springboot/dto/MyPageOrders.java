@@ -13,6 +13,7 @@ public class MyPageOrders {
     ProductOption option;
     int qty;
     int price;
+    Long did;
 
     public MyPageOrders(Long orderId, Date orderDate, String status, String thumbnail, String name, ProductOption option, int qty, int price) {
         this.orderId = orderId;
@@ -32,6 +33,24 @@ public class MyPageOrders {
         this.option = option;
         this.qty = qty;
         this.price = price;
+    }
+
+    public MyPageOrders(Long did, String status, String thumbnail, String name, ProductOption option, int qty, int price) {
+        this.did = did;
+        this.status = status;
+        this.thumbnail = thumbnail;
+        this.name = name;
+        this.option = option;
+        this.qty = qty;
+        this.price = price;
+    }
+
+    public Long getDid() {
+        return did;
+    }
+
+    public void setDid(Long did) {
+        this.did = did;
     }
 
     public Long getOrderId() {

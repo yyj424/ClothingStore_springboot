@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js">
+    </script>
+    <script src="/../scripts/icon.js" crossorigin="anonymous"></script>
+    <title>[[${change}]]</title>
+    <style>
+        table {
+            border-top: 1px solid lightgray;
+            border-collapse: collapse;
+        }
+        .details {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="/fragment/ShopHeader.html :: shopheader"></header>
+<div style="margin:10%;padding-left: 50px;">
+    <div>
+        <th:block th:replace="/fragment/MyPageMenu.html" :: menu></th:block>
+    </div>
+    <div style="position: relative;width:70%;margin-left: 200px;">
+        <h4 style="margin-top: 30px;">취소 신청</h4>
+        <h5 style="margin-top: 10px;">주문 번호 : [[${order.orid}]] / 주문일 : [[${order.date}]]</h5>
+        <table style="margin-top: 5px;width: 700px;
+            border-bottom: 1px solid lightgray;">
+            <tr th:each="detail, index :${details}" class="details">
+                <td class="details">
+                    <form id="changeForm" method="post">
+                        <input style="width:20px;height: 20px;" type="checkbox" name="selected" th:value="${detail.did}">
+                    </form>
+                </td>
+                <td class="details">
+                    <img th:src="${detail.thumbnail}" style="width:50px; height:50px;"/>
+                </td>
+                <td class="details">
+                    <span th:text="${detail.name}"></span>
+                    <span th:if="${detail.option.size != null}" th:text="${'(' + detail.option.color + ' ' + detail.option.size + ')'}"></span>
+                    <span th:if="${detail.option.size == null}" th:text="${'(' + detail.option.color + ')'}"></span>
+                </td>
+                <td class="details">
+                    <span th:text="${detail.qty}"></span>
+                </td>
+                <td class="details">
+                    <span th:text="${#numbers.formatInteger(detail.price, 3, 'COMMA')}"></span>
+                </td>
+                <td class="details">
+                    <span th:text="${detail.status}"></span>
+                </td>
+            </tr>
+        </table>
+        <div style="margin-top: 50px;">
+            <button id="btnChangeStatus" type="button" class="btn btn-outline-primary" style="width: 150px;">교환/반품</button>
+            <button id="btnList" type="button" class="btn btn-outline-secondary" style="margin-left: 20px;width: 150px;">취소</button>
+        </div>
+    </div>
+</div>
+<footer th:replace="/fragment/Footer.html :: footer"></footer>
+</body>
+<script th:inline="javascript">
+    $(document).ready (function() {
+        $("#btnList").click(function(){
+            window.history.back();
+        });
+        $('#btnChangeStatus').click(function(){
+            if ([[${change}]] === '주문 취소') {
+                $('#changeForm').attr("action", "/mypage/orders/").submit;
+            }
+            else {
+                $('#changeForm').attr("action", "/mypage/orders/").submit;
+            }
+        });
+    });
+</script>
+</html>

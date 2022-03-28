@@ -92,10 +92,10 @@
                     <td>
                         <span th:text="${order.status}"></span>
                     </td>
-                    <td>
-                        <button id="btnCancel" th:if="${order.status.equals('결제완료')}" type="button" class="btn btn-outline-primary" style="font-size: 10px;padding: 7px;">주문취소</button>
-                        <button id="btnTracking" th:if="${order.status.equals('배송준비중') || order.status.equals('배송중')}" type="button" class="btn btn-outline-primary" style="font-size: 10px;padding: 7px;">배송조회</button>
-                        <button id="btnExcAndRet" th:if="${order.status.equals('배송완료')}" type="button" class="btn btn-outline-primary" style="font-size: 10px;padding: 7px;">교환/반품</button>
+                    <td onclick="event.cancelBubble = true">
+                        <button th:onclick="|location.href='@{/mypage/orders/cancel/{id}(id=${order.orderId})}'|" th:if="${order.status.equals('결제완료')}" type="button" class="btn btn-outline-primary cancel" style="font-size: 10px;padding: 7px;">주문취소</button>
+                        <button th:onclick="|location.href='@{/mypage/orders/tracking/{id}(id=${order.orderId})}'|" th:if="${order.status.equals('배송준비중') || order.status.equals('배송중')}" type="button" class="btn btn-outline-primary tracking" style="font-size: 10px;padding: 7px;">배송조회</button>
+                        <button th:onclick="|location.href='@{/mypage/orders/exc-ret/{id}(id=${order.orderId})}'|" th:if="${order.status.equals('배송완료')}" type="button" class="btn btn-outline-primary exc-ret" style="font-size: 10px;padding: 7px;">교환/반품</button>
                     </td>
                 </tr>
             </tbody>

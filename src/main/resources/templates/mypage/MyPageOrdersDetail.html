@@ -100,7 +100,10 @@
             <tr>
                 <td class="inform">결제 수단</td>
                 <td>
-                    <span th:text="${order.pay}"></span>
+                    <span th:if="${order.pay.equals('card')}">카드결제</span>
+                    <span th:if="${order.pay.equals('phone')}">휴대폰결제</span>
+                    <span th:if="${order.pay.equals('bank')}">계좌이체</span>
+                    <span th:if="${order.pay.equals('kakao')}">카카오페이</span>
                 </td>
             </tr>
             <tr>
